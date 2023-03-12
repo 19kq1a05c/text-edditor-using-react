@@ -1,0 +1,80 @@
+import React, { useState, useEffect } from 'react';
+//import Button from 'react-bootstrap/Button;
+//import 'bootstrap/dist/css/bootstrap.min.jsx';
+import './TextEditor.jsx';
+
+const TextEditor = () => {
+  let boldtext = "";
+  const [bold, setbold] = useState(false);
+  const [italic, setItalic] = useState(false)
+  const [text, setText] = useState('');
+  const [comment, setComment] = useState("")
+  const [selectionStart, setSelectionStart] = useState(null);
+  const [selectionEnd, setSelectionEnd] = useState(null);
+  //const [comment, setComment] = useState('');
+  const [comments, setComments] = useState([]);
+
+  const handleTextChange = (event) => {
+    setText(event.target.value);
+  };
+
+  const handleSelectionChange = (event) => {
+    setSelectionStart(event.target.selectionStart);
+    setSelectionEnd(event.target.selectionEnd);
+  };
+ 
+
+
+
+  const handleBoldClick = () => {
+    console.log("Bold")
+    setbold(!bold);
+  };
+
+  const handleItalicClick = () => {
+    console.log("Italic")
+    setItalic(!italic)
+  };
+
+  const handleCommentChange = (event) => {
+    setComment(event.target.value);
+ };
+
+  const handleCommentSubmit = (event) => {
+    event.preventDefault();
+    if (comment && selectionStart !== null && selectionEnd !== null) {
+      setComments((prevComments) => [...prevComments, { text: comment, start: selectionStart, end: selectionEnd }]);
+      setComment('');
+      setSelectionStart(null);
+      setSelectionEnd(null);
+    }
+  };
+
+  const renderComments = () => {
+    return comments.map((comment, index) => {
+      const { text, start, end } = comment;
+      const commentText = text ? `(${text})` : '';
+      return (
+        <span key={index} className="comment" style={{ left: start, width: end - start }}>
+          {commentText}
+        </span>
+      );
+    });
+  };
+
+  return (
+    <div>
+      <div className="row">
+        <button onClick={handleBoldClick}>Bold</button>
+        <button onClick={handleItalicClick}>Italic</button>
+        
+      </div>
+      <div className="row">
+        <textarea style={bold ? (italic ?{fontWeight:"bold",fontStyle:"italic"}:{fontWeight:"bold"}) : (italic ? {fontStyle:"italic"} : {} )} value={text} onChange={(event)=>handleTextChange(event)}></textarea>
+      </div>
+        <input placeholder="Add Comment" value={comment} onChange={(event)=>{setComment(event.target.value)}}></input>
+    </div>
+  );
+};
+
+export default TextEditor;
